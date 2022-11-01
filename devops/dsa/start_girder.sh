@@ -24,6 +24,15 @@ iptables -t nat -A OUTPUT -o lo -p tcp -m tcp --dport 11211 -j DNAT --to-destina
 iptables -t nat -A POSTROUTING -o eth0 -m addrtype --src-type LOCAL --dst-type UNICAST -j MASQUERADE
 echo 'PATH="/opt/digital_slide_archive/devops/dsa/utils:/opt/venv/bin:/.pyenv/bin:/.pyenv/shims:$PATH"' >> /home/$(id -nu ${DSA_USER%%:*})/.bashrc
 echo ==== Pre-Provisioning === 
+
+
+chmod -R 0777 /opt/histoqc
+PATH="/opt/venv/bin:/.pyenv/bin:/.pyenv/shims:$PATH" \
+pip install -e /opt/histoqc
+
+PATH="/opt/venv/bin:/.pyenv/bin:/.pyenv/shims:$PATH" \
+girder build --dev
+
 PATH="/opt/venv/bin:/.pyenv/bin:/.pyenv/shims:$PATH" \
 python /opt/digital_slide_archive/devops/dsa/provision.py -v --pre 
 # Run subsequent commands as the DSA_USER.  This sets some paths based on what
@@ -36,7 +45,7 @@ python /opt/digital_slide_archive/devops/dsa/provision.py -v --pre
 #   resources.  It requires the host to have fuse installed and the docker
 #   container to be run with enough permissions to use fuse.
 # - Start the main girder process.
-su $(id -nu ${DSA_USER%%:*}) -c "
+su $(id -nu ${DSA_USER%%:*}) -c 
   PATH=\"/opt/digital_slide_archive/devops/dsa/utils:/opt/venv/bin:/.pyenv/bin:/.pyenv/shims:$PATH\";
   echo ==== Provisioning === &&
   python /opt/digital_slide_archive/devops/dsa/provision.py -v --main &&
